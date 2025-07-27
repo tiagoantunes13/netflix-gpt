@@ -1,12 +1,16 @@
 import { useRef, useState } from "react";
 import Header from "./Header";
-import { Link } from "react-router-dom";
 import {
   validateEmail,
   validateName,
   validatePassword,
 } from "../utils/validation";
 import ErrorInputMessage from "./ErrorInputMessage";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { auth } from "../utils/firebase";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -127,13 +131,54 @@ const Login = () => {
                 className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-sm transition-colors"
                 onClick={(e) => {
                   e.preventDefault();
-                  setError({
+                  const newErrors = {
                     email: validateEmail(email),
                     password: validatePassword(password),
                     ...(formSignup && {
                       name: validateName(name.current.value),
                     }),
-                  });
+                  };
+                  setError(newErrors);
+
+                  if (newErrors.email || newErrors.password || newErrors.name) {
+                    console.log("There is at least an error");
+                    return;
+                  }
+                  if (formSignup) {
+                    createUserWithEmailAndPassword(auth, email, password)
+                      .then((userCredential) => {
+                        // Signed up
+                        const user = userCredential.user;
+                        console.log("Created an User:");
+                        console.log(user);
+                        // ...
+                      })
+                      .catch((error) => {
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        console.log(
+                          `SIGN UP ERROR -> ${errorCode} - ${errorMessage}`
+                        );
+                        // ..
+                      });
+                  } else {
+                    signInWithEmailAndPassword(auth, email, password)
+                      .then((userCredential) => {
+                        // Signed in
+                        const user = userCredential.user;
+
+                        console.log("Entered an User:");
+                        console.log(user);
+                        // ...
+                      })
+                      .catch((error) => {
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        console.log(
+                          `LOGIN ERROR -> ${errorCode} - ${errorMessage}`
+                        );
+                      });
+                  }
                 }}
               >
                 {formSignup ? "Sign Up" : "Sign In"}
