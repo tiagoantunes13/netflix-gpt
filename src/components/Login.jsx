@@ -1,17 +1,34 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Header from "./Header";
 import { Link } from "react-router-dom";
+import {
+  validateEmail,
+  validateName,
+  validatePassword,
+} from "../utils/validation";
+import ErrorInputMessage from "./ErrorInputMessage";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
+  // const [name, setName] = useState("");
   const [authenticationPassword, setAuthenticationPassword] = useState("");
   const [formSignup, setFormSignup] = useState(false);
+  const [error, setError] = useState({});
+
+  const name = useRef(null);
 
   const toggleForm = () => {
     setFormSignup(!formSignup);
   };
+
+  const removeError = (field) => {
+    setError({
+      ...error,
+      [field]: "",
+    });
+  };
+
   return (
     <div className="relative min-h-screen overflow-hidden">
       <Header />
@@ -36,21 +53,42 @@ const Login = () => {
                 onChange={(e) => {
                   setEmail(e.target.value);
                 }}
+                onBlur={() => {
+                  setError({
+                    ...error,
+                    email: validateEmail(email),
+                  });
+                }}
+                onFocus={() => removeError("email")}
                 required="true"
                 placeholder="Email or mobile number"
                 className="w-full p-4 bg-gray-800 bg-opacity-80 text-white rounded-sm border border-gray-600 placeholder-gray-400 focus:outline-none focus:border-gray-400 focus:bg-gray-700"
               />
+              {error["email"] && <ErrorInputMessage message={error["email"]} />}
               {formSignup && (
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => {
-                    setName(e.target.value);
-                  }}
-                  required="true"
-                  placeholder="Name"
-                  className="w-full p-4 bg-gray-800 bg-opacity-80 text-white rounded-sm border border-gray-600 placeholder-gray-400 focus:outline-none focus:border-gray-400 focus:bg-gray-700"
-                />
+                <div>
+                  <input
+                    type="text"
+                    ref={name}
+                    // value={name}
+                    // onChange={(e) => {
+                    //   setName(e.target.value);
+                    // }}
+                    onBlur={() => {
+                      setError({
+                        ...error,
+                        name: validateName(name.current.value),
+                      });
+                    }}
+                    onFocus={() => removeError("name")}
+                    required="true"
+                    placeholder="Name"
+                    className="w-full p-4 bg-gray-800 bg-opacity-80 text-white rounded-sm border border-gray-600 placeholder-gray-400 focus:outline-none focus:border-gray-400 focus:bg-gray-700"
+                  />
+                  {error["name"] && (
+                    <ErrorInputMessage message={error["name"]} />
+                  )}
+                </div>
               )}
               <input
                 type="password"
@@ -58,11 +96,21 @@ const Login = () => {
                 onChange={(e) => {
                   setPassword(e.target.value);
                 }}
+                onBlur={() => {
+                  setError({
+                    ...error,
+                    password: validatePassword(password),
+                  });
+                }}
+                onFocus={() => removeError("password")}
                 required="true"
                 placeholder="Password"
                 className="w-full p-4 bg-gray-800 bg-opacity-80 text-white rounded-sm border border-gray-600 placeholder-gray-400 focus:outline-none focus:border-gray-400 focus:bg-gray-700"
               />
-              {formSignup && (
+              {error["password"] && (
+                <ErrorInputMessage message={error["password"]} />
+              )}
+              {/* {formSignup && (
                 <input
                   type="password"
                   value={authenticationPassword}
@@ -73,9 +121,21 @@ const Login = () => {
                   placeholder="Insert your Password again"
                   className="w-full p-4 bg-gray-800 bg-opacity-80 text-white rounded-sm border border-gray-600 placeholder-gray-400 focus:outline-none focus:border-gray-400 focus:bg-gray-700"
                 />
-              )}
+              )} */}
 
-              <button className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-sm transition-colors">
+              <button
+                className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-sm transition-colors"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setError({
+                    email: validateEmail(email),
+                    password: validatePassword(password),
+                    ...(formSignup && {
+                      name: validateName(name.current.value),
+                    }),
+                  });
+                }}
+              >
                 {formSignup ? "Sign Up" : "Sign In"}
               </button>
             </div>
