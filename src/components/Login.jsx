@@ -9,21 +9,37 @@ import ErrorInputMessage from "./ErrorInputMessage";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  updateProfile,
 } from "firebase/auth";
 import { auth } from "../utils/firebase";
+import { useDispatch, useSelector } from "react-redux";
+import { addUser, removeUser } from "../utils/userSlice";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  // const [name, setName] = useState("");
-  const [authenticationPassword, setAuthenticationPassword] = useState("");
   const [formSignup, setFormSignup] = useState(false);
   const [error, setError] = useState({});
 
   const name = useRef(null);
 
+  const dispatch = useDispatch();
+
   const toggleForm = () => {
     setFormSignup(!formSignup);
+  };
+
+  const sendDataToStore = (userCredential) => {
+    const user = userCredential.user;
+    const serializableUser = {
+      accessToken: user.accessToken,
+      displayName: user.displayName,
+      email: user.email,
+      emailVerified: user.emailVerified,
+      uid: user.uid,
+    };
+    dispatch(addUser(serializableUser));
+    // ...
   };
 
   const removeError = (field) => {
@@ -49,6 +65,9 @@ const Login = () => {
           <h1 className="text-white text-3xl font-semibold mb-7">
             {formSignup ? "Sign Up" : "Sign In"}
           </h1>
+          {error.general && (
+            <ErrorInputMessage message={error.general} variant="title" />
+          )}
           <form>
             <div className="space-y-4 mb-2">
               <input
@@ -147,11 +166,18 @@ const Login = () => {
                   if (formSignup) {
                     createUserWithEmailAndPassword(auth, email, password)
                       .then((userCredential) => {
-                        // Signed up
-                        const user = userCredential.user;
-                        console.log("Created an User:");
-                        console.log(user);
-                        // ...
+                        sendDataToStore(userCredential);
+                        console.log("current user");
+                        console.log(userCredential.user);
+                        updateProfile(userCredential.user, {
+                          displayName: name,
+                        })
+                          .then(() => {
+                            console.log("UPDATED");
+                          })
+                          .catch((error) => {
+                            console.log(`ERROR -> ${error}`);
+                          });
                       })
                       .catch((error) => {
                         const errorCode = error.code;
@@ -159,17 +185,11 @@ const Login = () => {
                         console.log(
                           `SIGN UP ERROR -> ${errorCode} - ${errorMessage}`
                         );
-                        // ..
                       });
                   } else {
                     signInWithEmailAndPassword(auth, email, password)
                       .then((userCredential) => {
-                        // Signed in
-                        const user = userCredential.user;
-
-                        console.log("Entered an User:");
-                        console.log(user);
-                        // ...
+                        sendDataToStore(userCredential);
                       })
                       .catch((error) => {
                         const errorCode = error.code;
@@ -177,6 +197,10 @@ const Login = () => {
                         console.log(
                           `LOGIN ERROR -> ${errorCode} - ${errorMessage}`
                         );
+                        setError({
+                          ...error,
+                          general: "Wrong Credentials",
+                        });
                       });
                   }
                 }}

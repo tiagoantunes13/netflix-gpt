@@ -1,18 +1,33 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Browse from "./Browse";
 import Login from "./Login";
+import AuthWrapper from "./AuthWrapper";
+import Error from "./Error";
 
 const Body = () => {
   const appRouter = createBrowserRouter([
     {
       path: "/",
-      element: <Login />,
+      element: (
+        <AuthWrapper>
+          <Login />
+        </AuthWrapper>
+      ),
     },
     {
       path: "/browse",
-      element: <Browse />,
+      element: (
+        <AuthWrapper>
+          <Browse />
+        </AuthWrapper>
+      ),
+    },
+    {
+      path: "/error",
+      element: <Error />,
     },
   ]);
+
   return (
     <div>
       <RouterProvider router={appRouter} />
