@@ -14,6 +14,9 @@ import {
 import { auth } from "../utils/firebase";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser, removeUser } from "../utils/userSlice";
+import { useLocation } from "react-router-dom";
+import Toast from "./Toast";
+import { BODY_IMAGE } from "../utils/contants";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -24,6 +27,9 @@ const Login = () => {
   const name = useRef(null);
 
   const dispatch = useDispatch();
+
+  const location = useLocation();
+  const message = location.state?.message;
 
   const toggleForm = () => {
     setFormSignup(!formSignup);
@@ -49,12 +55,15 @@ const Login = () => {
     });
   };
 
+  console.log(message);
+
   return (
     <div className="relative min-h-screen overflow-hidden">
       <Header />
+      {message && <Toast message={message} />}
       <div className="absolute inset-0 z-0">
         <img
-          src="https://assets.nflxext.com/ffe/siteui/vlv3/258d0f77-2241-4282-b613-8354a7675d1a/web/PT-en-20250721-TRIFECTA-perspective_25fb527a-6a90-426e-aad7-bdd711d5fe31_large.jpg"
+          src={BODY_IMAGE}
           alt="Netflix Background"
           className="w-full h-full object-cover"
         />

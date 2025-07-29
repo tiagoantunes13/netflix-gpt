@@ -3,6 +3,7 @@ import Browse from "./Browse";
 import Login from "./Login";
 import AuthWrapper from "./AuthWrapper";
 import Error from "./Error";
+import Movie from "./Movie";
 
 const Body = () => {
   const appRouter = createBrowserRouter([
@@ -19,6 +20,14 @@ const Body = () => {
       element: (
         <AuthWrapper>
           <Browse />
+        </AuthWrapper>
+      ),
+    },
+    {
+      path: "/movie/:id",
+      element: (
+        <AuthWrapper>
+          <Movie />
         </AuthWrapper>
       ),
     },

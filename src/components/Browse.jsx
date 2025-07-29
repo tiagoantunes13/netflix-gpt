@@ -1,15 +1,78 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Header from "./Header";
+import { BACKGROUND_IMAGE, TMDB_IMAGES } from "../utils/contants";
+import MovieCarrousel from "./MovieCarrousel";
+import Carrousel from "./Carrousel";
 
 const Browse = () => {
-  // Sample movie data for the carousel
-  const featuredMovie = {
+  const [library, setLibrary] = useState({});
+  const sections = ["all", "movie", "tv"];
+  const featuredMovie = library?.all?.[2] || {
     title: "Stranger Things",
-    description:
+    overview:
       "When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces, and one strange little girl.",
-    backgroundImage:
-      "https://assets-prd.ignimgs.com/2022/05/12/stranger-things-4-poster-1652364986162.jpeg",
+    poster_path: BACKGROUND_IMAGE,
   };
+
+  console.log(library);
+
+  const fetchLibrary = async () => {
+    const options = {
+      method: "GET",
+      headers: {
+        accept: "application/json",
+        Authorization:
+          "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5OGM0MWRkZGQ4MzMwZDE5MzAyZjAwY2JiZTM0NTU5ZSIsIm5iZiI6MTc1MzgyMTE3OS4yNjU5OTk4LCJzdWIiOiI2ODg5MmZmYjcyMWZmNTJhOTFlMTM2ZWYiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.ASnol3tUnex3OCkbtnSSLLXByxG61pEEG_oKZDL4nfA",
+      },
+    };
+    const lib = {};
+    for (const section of sections) {
+      const data = await fetch(
+        `https://api.themoviedb.org/3/trending/${section}/day?language=en-US`,
+        options
+      );
+      const json = await data.json();
+      lib[section] = json.results;
+    }
+
+    setLibrary(lib);
+  };
+  //   const options = {
+  //     method: "GET",
+  //     headers: {
+  //       accept: "application/json",
+  //       Authorization: "Bearer eyJhbGciOiJIUzI1NiJ9...", // your token
+  //     },
+  //   };
+
+  //   try {
+  //     // Parallel execution - much faster!
+  //     const results = await Promise.all(
+  //       sections.map(async (section) => {
+  //         const data = await fetch(
+  //           `https://api.themoviedb.org/3/trending/${section}/day?language=en-US`,
+  //           options
+  //         );
+  //         const json = await data.json();
+  //         return { section, json };
+  //       })
+  //     );
+
+  //     // Convert to object
+  //     const lib = Object.fromEntries(
+  //       results.map(({ section, json }) => [section, json.results])
+  //     );
+
+  //     setLibrary(lib);
+  //   } catch (error) {
+  //     console.error("Failed to fetch library:", error);
+  //     // Handle error appropriately
+  //   }
+  // };
+
+  useEffect(() => {
+    fetchLibrary();
+  }, []);
 
   return (
     <div className="bg-black min-h-screen">
@@ -19,7 +82,11 @@ const Browse = () => {
       <div className="relative h-screen">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${featuredMovie.backgroundImage})` }}
+          style={{
+            backgroundImage: `url(${
+              TMDB_IMAGES + "original" + featuredMovie.poster_path
+            })`,
+          }}
         >
           <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent"></div>
           <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
@@ -32,7 +99,7 @@ const Browse = () => {
               {featuredMovie.title}
             </h1>
             <p className="text-lg md:text-xl text-gray-300 mb-8 leading-relaxed">
-              {featuredMovie.description}
+              {featuredMovie.overview}
             </p>
             <div className="flex space-x-4">
               <button className="bg-white text-black px-8 py-3 rounded font-bold text-lg hover:bg-gray-200 transition-colors flex items-center">
@@ -64,6 +131,14 @@ const Browse = () => {
             </div>
           </div>
         </div>
+      </div>
+      <div className="-mt-32">
+        {Object.entries(library).map(
+          ([section, data]) =>
+            section && (
+              <Carrousel key={section} library={data} section={section} />
+            )
+        )}
       </div>
     </div>
   );
