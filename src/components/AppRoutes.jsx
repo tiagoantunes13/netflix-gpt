@@ -9,6 +9,7 @@ import Login from "./Login";
 import { useSelector } from "react-redux";
 import ProtectedRoute from "./ProtectedRoute";
 import Error from "./Error";
+import Favorites from "./Favorites";
 
 const AppRoutes = () => {
   const user = useSelector((store) => store.user.value);
@@ -35,6 +36,14 @@ const AppRoutes = () => {
       element: (
         <ProtectedRoute user={user}>
           <Movie />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/favorites",
+      element: (
+        <ProtectedRoute user={user}>
+          <Favorites />
         </ProtectedRoute>
       ),
     },

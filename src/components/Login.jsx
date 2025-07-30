@@ -55,8 +55,6 @@ const Login = () => {
     });
   };
 
-  console.log(message);
-
   return (
     <div className="relative min-h-screen overflow-hidden">
       <Header />
@@ -169,15 +167,12 @@ const Login = () => {
                   setError(newErrors);
 
                   if (newErrors.email || newErrors.password || newErrors.name) {
-                    console.log("There is at least an error");
                     return;
                   }
                   if (formSignup) {
                     createUserWithEmailAndPassword(auth, email, password)
                       .then((userCredential) => {
                         sendDataToStore(userCredential);
-                        console.log("current user");
-                        console.log(userCredential.user);
                         updateProfile(userCredential.user, {
                           displayName: name,
                         })
@@ -191,9 +186,6 @@ const Login = () => {
                       .catch((error) => {
                         const errorCode = error.code;
                         const errorMessage = error.message;
-                        console.log(
-                          `SIGN UP ERROR -> ${errorCode} - ${errorMessage}`
-                        );
                       });
                   } else {
                     signInWithEmailAndPassword(auth, email, password)
@@ -203,9 +195,6 @@ const Login = () => {
                       .catch((error) => {
                         const errorCode = error.code;
                         const errorMessage = error.message;
-                        console.log(
-                          `LOGIN ERROR -> ${errorCode} - ${errorMessage}`
-                        );
                         setError({
                           ...error,
                           general: "Wrong Credentials",

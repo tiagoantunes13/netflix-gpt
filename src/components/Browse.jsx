@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
 import Header from "./Header";
 import { BACKGROUND_IMAGE, TMDB_IMAGES } from "../utils/contants";
-import MovieCarrousel from "./MovieCarrousel";
 import Carrousel from "./Carrousel";
 import { useNavigate } from "react-router-dom";
 
 const Browse = () => {
   const [library, setLibrary] = useState({});
-  const [count, setCount] = useState(0);
   const navigate = useNavigate();
   const sections = ["all", "movie", "tv"];
   const featuredMovie = library?.movie?.[0] || {
@@ -16,8 +14,6 @@ const Browse = () => {
       "When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces, and one strange little girl.",
     poster_path: BACKGROUND_IMAGE,
   };
-
-  console.log(library);
 
   const fetchLibrary = async () => {
     const options = {
@@ -43,6 +39,9 @@ const Browse = () => {
 
   useEffect(() => {
     fetchLibrary();
+    return () => {
+      console.log("UNMOUNTING");
+    };
   }, []);
 
   return (
@@ -86,8 +85,7 @@ const Browse = () => {
               <button
                 className="bg-gray-600 bg-opacity-70 text-white px-8 py-3 rounded font-bold text-lg hover:bg-opacity-90 transition-all flex items-center"
                 onClick={() => {
-                  setCount(count + 1);
-                  // navigate(`/movie/${featuredMovie.id}`);
+                  navigate(`/movie/${featuredMovie.id}`);
                 }}
               >
                 <svg

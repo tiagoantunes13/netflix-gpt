@@ -26,9 +26,16 @@ const Header = () => {
                 {user.email.charAt(0).toUpperCase()}
               </span>
             </div>
-            <h1 className="text-white font-medium text-lg hidden sm:block">
-              {user.displayName}
-            </h1>
+
+            <button
+              className="bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-2 rounded text-sm transition-colors duration-200 ml-2"
+              onClick={() => {
+                navigate("/favorites");
+              }}
+            >
+              Favorites
+            </button>
+
             <button
               onClick={() => {
                 signOut(auth)

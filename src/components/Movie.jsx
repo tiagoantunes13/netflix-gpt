@@ -4,11 +4,17 @@ import Header from "./Header";
 import { TMDB_IMAGES } from "../utils/contants";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
+import { useDispatch, useSelector } from "react-redux";
+import { addFavorite, removeFavorite } from "../utils/favoritesSlice";
 
 const Movie = () => {
   const { id } = useParams();
   const [movie, setMovie] = useState({});
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const favMovies = useSelector((store) => store.favorites.value);
+  const isFav = favMovies.find((fav) => fav.id === movie.id);
+  const [copied, setCopied] = useState(false);
 
   const fetchMovie = async () => {
     const options = {
@@ -26,8 +32,6 @@ const Movie = () => {
     const json = await data.json();
     setMovie(json);
   };
-
-  console.log(movie);
 
   useEffect(() => {
     fetchMovie();
@@ -109,22 +113,52 @@ const Movie = () => {
                 </svg>
                 Play
               </button>
-              <button className="bg-gray-600 bg-opacity-70 text-white px-8 py-3 rounded font-bold text-lg hover:bg-opacity-90 transition-all flex items-center">
-                <svg
-                  className="w-6 h-6 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+              {!isFav ? (
+                <button
+                  className="bg-gray-600 bg-opacity-70 text-white px-8 py-3 rounded font-bold text-lg hover:bg-opacity-90 transition-all flex items-center"
+                  onClick={() => {
+                    dispatch(addFavorite(movie));
+                  }}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                  />
-                </svg>
-                My List
-              </button>
+                  <svg
+                    className="w-6 h-6 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                    />
+                  </svg>
+                  My List
+                </button>
+              ) : (
+                <button
+                  className="bg-gray-600 bg-opacity-70 text-white px-8 py-3 rounded font-bold text-lg hover:bg-opacity-90 transition-all flex items-center"
+                  onClick={() => {
+                    dispatch(removeFavorite(movie));
+                  }}
+                >
+                  <svg
+                    className="w-6 h-6 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M18 12H6"
+                    />
+                  </svg>
+                  Remove
+                </button>
+              )}
+
               <button className="bg-gray-600 bg-opacity-70 text-white p-3 rounded-full hover:bg-opacity-90 transition-all">
                 <svg
                   className="w-6 h-6"
@@ -140,19 +174,41 @@ const Movie = () => {
                   />
                 </svg>
               </button>
-              <button className="bg-gray-600 bg-opacity-70 text-white p-3 rounded-full hover:bg-opacity-90 transition-all">
+              <button
+                className={`${
+                  copied
+                    ? "bg-red-600 bg-opacity-90"
+                    : "bg-gray-600 bg-opacity-70 hover:bg-opacity-90"
+                } text-white p-3 rounded-full transition-all`}
+                onClick={() => {
+                  navigator.clipboard.writeText(movie.homepage);
+                  setCopied(true);
+                  setTimeout(() => {
+                    setCopied(false);
+                  }, 2000);
+                }}
+              >
                 <svg
                   className="w-6 h-6"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"
-                  />
+                  {copied ? (
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  ) : (
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"
+                    />
+                  )}
                 </svg>
               </button>
             </div>
