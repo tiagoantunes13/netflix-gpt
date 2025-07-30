@@ -3,9 +3,12 @@ import Header from "./Header";
 import { BACKGROUND_IMAGE, TMDB_IMAGES } from "../utils/contants";
 import Carrousel from "./Carrousel";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { setLibrary } from "../utils/moviesSlice";
 
 const Browse = () => {
-  const [library, setLibrary] = useState({});
+  const { library, lastFetched } = useSelector((store) => store.movies);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const sections = ["all", "movie", "tv"];
   const featuredMovie = library?.movie?.[0] || {
@@ -34,11 +37,13 @@ const Browse = () => {
       lib[section] = json.results;
     }
 
-    setLibrary(lib);
+    dispatch(setLibrary(lib));
   };
 
   useEffect(() => {
-    fetchLibrary();
+    if (!lastFetched) {
+      fetchLibrary();
+    }
     return () => {
       console.log("UNMOUNTING");
     };
@@ -108,12 +113,13 @@ const Browse = () => {
         </div>
       </div>
       <div className="-mt-32">
-        {Object.entries(library).map(
-          ([section, data]) =>
-            section && (
-              <Carrousel key={section} library={data} section={section} />
-            )
-        )}
+        {library &&
+          Object.entries(library).map(
+            ([section, data]) =>
+              section && (
+                <Carrousel key={section} library={data} section={section} />
+              )
+          )}
       </div>
     </div>
   );
