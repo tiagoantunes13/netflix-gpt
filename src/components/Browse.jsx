@@ -3,11 +3,14 @@ import Header from "./Header";
 import { BACKGROUND_IMAGE, TMDB_IMAGES } from "../utils/contants";
 import MovieCarrousel from "./MovieCarrousel";
 import Carrousel from "./Carrousel";
+import { useNavigate } from "react-router-dom";
 
 const Browse = () => {
   const [library, setLibrary] = useState({});
+  const [count, setCount] = useState(0);
+  const navigate = useNavigate();
   const sections = ["all", "movie", "tv"];
-  const featuredMovie = library?.all?.[2] || {
+  const featuredMovie = library?.movie?.[0] || {
     title: "Stranger Things",
     overview:
       "When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces, and one strange little girl.",
@@ -37,38 +40,6 @@ const Browse = () => {
 
     setLibrary(lib);
   };
-  //   const options = {
-  //     method: "GET",
-  //     headers: {
-  //       accept: "application/json",
-  //       Authorization: "Bearer eyJhbGciOiJIUzI1NiJ9...", // your token
-  //     },
-  //   };
-
-  //   try {
-  //     // Parallel execution - much faster!
-  //     const results = await Promise.all(
-  //       sections.map(async (section) => {
-  //         const data = await fetch(
-  //           `https://api.themoviedb.org/3/trending/${section}/day?language=en-US`,
-  //           options
-  //         );
-  //         const json = await data.json();
-  //         return { section, json };
-  //       })
-  //     );
-
-  //     // Convert to object
-  //     const lib = Object.fromEntries(
-  //       results.map(({ section, json }) => [section, json.results])
-  //     );
-
-  //     setLibrary(lib);
-  //   } catch (error) {
-  //     console.error("Failed to fetch library:", error);
-  //     // Handle error appropriately
-  //   }
-  // };
 
   useEffect(() => {
     fetchLibrary();
@@ -112,7 +83,13 @@ const Browse = () => {
                 </svg>
                 Play
               </button>
-              <button className="bg-gray-600 bg-opacity-70 text-white px-8 py-3 rounded font-bold text-lg hover:bg-opacity-90 transition-all flex items-center">
+              <button
+                className="bg-gray-600 bg-opacity-70 text-white px-8 py-3 rounded font-bold text-lg hover:bg-opacity-90 transition-all flex items-center"
+                onClick={() => {
+                  setCount(count + 1);
+                  // navigate(`/movie/${featuredMovie.id}`);
+                }}
+              >
                 <svg
                   className="w-6 h-6 mr-2"
                   fill="none"

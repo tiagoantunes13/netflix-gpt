@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Header from "./Header";
 import { TMDB_IMAGES } from "../utils/contants";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 
 const Movie = () => {
   const { id } = useParams();
@@ -17,7 +19,10 @@ const Movie = () => {
           "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5OGM0MWRkZGQ4MzMwZDE5MzAyZjAwY2JiZTM0NTU5ZSIsIm5iZiI6MTc1MzgyMTE3OS4yNjU5OTk4LCJzdWIiOiI2ODg5MmZmYjcyMWZmNTJhOTFlMTM2ZWYiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.ASnol3tUnex3OCkbtnSSLLXByxG61pEEG_oKZDL4nfA",
       },
     };
-    const data = await fetch(`https://api.themoviedb.org/3/tv/${id}`, options);
+    const data = await fetch(
+      `https://api.themoviedb.org/3/movie/${id}`,
+      options
+    );
     const json = await data.json();
     setMovie(json);
   };
@@ -50,29 +55,19 @@ const Movie = () => {
           {/* <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div> */}
         </div>
 
-        {/* Back Button */}
-        <button
-          onClick={() => navigate("/browse")}
-          className="absolute top-24 left-8 z-20 bg-black bg-opacity-50 hover:bg-opacity-70 text-white p-3 rounded-full transition-all"
-        >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M10 19l-7-7m0 0l7-7m-7 7h18"
-            />
-          </svg>
-        </button>
-
         {/* Movie Details */}
         <div className="relative z-10 flex items-center h-full px-8 md:px-16">
           <div className="max-w-2xl">
+            {/* Back Button */}
+            <button onClick={() => navigate("/browse")}>
+              <FontAwesomeIcon
+                icon={faChevronLeft}
+                className="cursor-pointer text-white mb-20"
+                onClick={() => {
+                  console.log("click");
+                }}
+              />
+            </button>
             <h1 className="text-5xl md:text-7xl font-bold text-white mb-4">
               {movie.title}
             </h1>
