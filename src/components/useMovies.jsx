@@ -48,10 +48,7 @@ const useMovies = () => {
 
     dispatch(
       setLibraryArray(
-        // Object.entries(lib)
-        //   .map(([, movies]) => movies.map((movie) => [movie.id, movie.title]))
-        //   .flat()
-        lib.all.map((movie) => [movie.id, movie.title])
+        lib.all?.map((movie) => [movie.id, movie.title]) || []
       )
     );
 
