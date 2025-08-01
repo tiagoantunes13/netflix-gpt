@@ -5,15 +5,23 @@ export const moviesSlice = createSlice({
   initialState: {
     library: null,
     lastFetched: null,
+    featuredMovie: null,
+    libraryArray: [],
   },
   reducers: {
     setLibrary: (state, action) => {
       state.library = action.payload;
       state.lastFetched = Date.now();
     },
+    setFeaturedMovie: (state, action) => {
+      state.featuredMovie = action.payload;
+    },
+    setLibraryArray: (state, action) => {
+      state.libraryArray = action.payload;
+    },
   },
 });
 
-export const { setLibrary } = moviesSlice.actions;
+export const { setLibrary, setFeaturedMovie, setLibraryArray } = moviesSlice.actions;
 
 export default moviesSlice.reducer;
