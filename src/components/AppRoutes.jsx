@@ -11,6 +11,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import Error from "./Error";
 import Favorites from "./Favorites";
 import GptSearch from "./GptSearch";
+import PersonalProfile from "./PersonalProfile";
 
 const AppRoutes = () => {
   const user = useSelector((store) => store.user.value);
@@ -53,6 +54,14 @@ const AppRoutes = () => {
       element: (
         <ProtectedRoute user={user}>
           <GptSearch />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/profile",
+      element: (
+        <ProtectedRoute user={user}>
+          <PersonalProfile />
         </ProtectedRoute>
       ),
     },
