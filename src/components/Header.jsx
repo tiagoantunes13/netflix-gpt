@@ -37,6 +37,15 @@ const Header = () => {
             </button>
 
             <button
+              className="bg-purple-600 hover:bg-purple-700 text-white font-medium px-4 py-2 rounded text-sm transition-colors duration-200 ml-2"
+              onClick={() => {
+                navigate("/gpt-search");
+              }}
+            >
+              🤖 GPT Search
+            </button>
+
+            <button
               onClick={() => {
                 signOut(auth)
                   .then(() => {

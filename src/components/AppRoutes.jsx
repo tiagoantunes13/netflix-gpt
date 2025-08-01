@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 import ProtectedRoute from "./ProtectedRoute";
 import Error from "./Error";
 import Favorites from "./Favorites";
+import GptSearch from "./GptSearch";
 
 const AppRoutes = () => {
   const user = useSelector((store) => store.user.value);
@@ -44,6 +45,14 @@ const AppRoutes = () => {
       element: (
         <ProtectedRoute user={user}>
           <Favorites />
+        </ProtectedRoute>
+      ),
+    },
+    {
+      path: "/gpt-search",
+      element: (
+        <ProtectedRoute user={user}>
+          <GptSearch />
         </ProtectedRoute>
       ),
     },

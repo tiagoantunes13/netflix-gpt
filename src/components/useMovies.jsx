@@ -47,9 +47,7 @@ const useMovies = () => {
     console.log(lib);
 
     dispatch(
-      setLibraryArray(
-        lib.all?.map((movie) => [movie.id, movie.title]) || []
-      )
+      setLibraryArray(lib.all?.map((movie) => [movie.id, movie.title]) || [])
     );
 
     dispatch(setLibrary(lib));
