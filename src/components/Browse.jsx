@@ -1,70 +1,50 @@
-import { useEffect, useState } from "react";
 import Header from "./Header";
-import { BACKGROUND_IMAGE, TMDB_IMAGES } from "../utils/contants";
+import { TMDB_IMAGES } from "../utils/contants";
 import Carrousel from "./Carrousel";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { setLibrary } from "../utils/moviesSlice";
+import useMovies from "./useMovies";
+import BrowseShimmer from "./BrowseShimmer";
+import { useState } from "react";
 
 const Browse = () => {
-  const { library, lastFetched } = useSelector((store) => store.movies);
-  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const sections = ["all", "movie", "tv"];
-  const featuredMovie = library?.movie?.[0] || {
-    title: "Stranger Things",
-    overview:
-      "When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces, and one strange little girl.",
-    poster_path: BACKGROUND_IMAGE,
-  };
+  const { library, featuredMovie } = useMovies();
+  const [video, setVideo] = useState();
+  console.log(library);
+  console.log(featuredMovie);
 
-  const fetchLibrary = async () => {
-    const options = {
-      method: "GET",
-      headers: {
-        accept: "application/json",
-        Authorization: `Bearer ${process.env.REACT_APP_TMDB_BEARER_TOKEN}`,
-      },
-    };
-    const lib = {};
-    for (const section of sections) {
-      const data = await fetch(
-        `https://api.themoviedb.org/3/trending/${section}/day?language=en-US`,
-        options
-      );
-      const json = await data.json();
-      lib[section] = json.results;
-    }
-
-    dispatch(setLibrary(lib));
-  };
-
-  useEffect(() => {
-    if (!lastFetched) {
-      fetchLibrary();
-    }
-    return () => {
-      console.log("UNMOUNTING");
-    };
-  }, []);
+  if (!library) {
+    return <BrowseShimmer />;
+  }
 
   return (
     <div className="bg-black min-h-screen">
       <Header />
 
       {/* Hero Section */}
+
       <div className="relative h-screen">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: `url(${
-              TMDB_IMAGES + "original" + featuredMovie.poster_path
-            })`,
-          }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent"></div>
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
-        </div>
+        {video && featuredMovie.trailer ? (
+          <div className="absolute inset-0">
+            <iframe
+              className="w-full h-full object-cover scale-150"
+              src={`https://www.youtube.com/embed/${featuredMovie.trailer.key}?autoplay=1&mute=1&loop=1&start=60&end=80`}
+              title={featuredMovie.name}
+            />
+          </div>
+        ) : (
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: `url(${
+                TMDB_IMAGES + "original" + featuredMovie.poster_path
+              })`,
+            }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent"></div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+          </div>
+        )}
 
         {/* Hero Content */}
         <div className="relative z-10 flex items-center h-full px-8 md:px-16">
@@ -107,18 +87,27 @@ const Browse = () => {
                 </svg>
                 More Info
               </button>
+              {featuredMovie.trailer && (
+                <button
+                  className="bg-gray-600 bg-opacity-70 text-white px-8 py-3 rounded font-bold text-lg hover:bg-opacity-90 transition-all flex items-center"
+                  onClick={() => {
+                    setVideo(!video);
+                  }}
+                >
+                  {video ? "Image" : "Video"}
+                </button>
+              )}
             </div>
           </div>
         </div>
       </div>
       <div className="-mt-32">
-        {library &&
-          Object.entries(library).map(
-            ([section, data]) =>
-              section && (
-                <Carrousel key={section} library={data} section={section} />
-              )
-          )}
+        {Object.entries(library).map(
+          ([section, data]) =>
+            section && (
+              <Carrousel key={section} library={data} section={section} />
+            )
+        )}
       </div>
     </div>
   );
