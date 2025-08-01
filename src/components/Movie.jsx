@@ -21,8 +21,7 @@ const Movie = () => {
       method: "GET",
       headers: {
         accept: "application/json",
-        Authorization:
-          "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5OGM0MWRkZGQ4MzMwZDE5MzAyZjAwY2JiZTM0NTU5ZSIsIm5iZiI6MTc1MzgyMTE3OS4yNjU5OTk4LCJzdWIiOiI2ODg5MmZmYjcyMWZmNTJhOTFlMTM2ZWYiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.ASnol3tUnex3OCkbtnSSLLXByxG61pEEG_oKZDL4nfA",
+        Authorization: `Bearer ${process.env.REACT_APP_TMDB_BEARER_TOKEN}`,
       },
     };
     const data = await fetch(
