@@ -158,6 +158,16 @@ const Movie = () => {
                 </button>
               )}
 
+              {movie.homepage && (
+                <button 
+                  className="bg-gray-600 bg-opacity-70 text-white px-8 py-3 rounded font-bold text-lg hover:bg-opacity-90 transition-all flex items-center"
+                  onClick={() => window.open(movie.homepage, '_blank')}
+                >
+                  <span className="text-2xl mr-2">🎬</span>
+                  Trailer
+                </button>
+              )}
+
               <button className="bg-gray-600 bg-opacity-70 text-white p-3 rounded-full hover:bg-opacity-90 transition-all">
                 <svg
                   className="w-6 h-6"
