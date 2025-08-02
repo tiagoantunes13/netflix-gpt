@@ -46,9 +46,17 @@ const useMovies = () => {
     console.log(videoJson);
     console.log(lib);
 
-    dispatch(
-      setLibraryArray(lib.all?.map((movie) => [movie.id, movie.title]) || [])
-    );
+    const enrichedMovies = lib.all?.map((movie) => ({
+      id: movie.id,
+      title: movie.title,
+      overview: movie.overview,
+      genre_ids: movie.genre_ids,
+      release_date: movie.release_date || movie.first_air_date,
+      vote_average: movie.vote_average,
+      media_type: movie.media_type
+    })) || [];
+
+    dispatch(setLibraryArray(enrichedMovies));
 
     dispatch(setLibrary(lib));
     dispatch(
